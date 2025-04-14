@@ -6,9 +6,8 @@ app = Flask(__name__)
 entropy_lock = threading.Lock()
 latest_entropy = None
 
-# Update this to match your Arduino's port
-SERIAL_PORT = '/dev/cu.usbmodem1101'  # macOS/Linux
-# SERIAL_PORT = 'COM3'                 # Windows
+
+SERIAL_PORT = '/dev/cu.usbmodem1101'
 BAUD_RATE = 115200
 
 def read_entropy():
