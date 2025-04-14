@@ -7,7 +7,7 @@ entropy_lock = threading.Lock()
 latest_entropy = None
 
 # Update this to match your Arduino's port
-SERIAL_PORT = '/dev/tty.usbmodemXXXX'  # macOS/Linux
+SERIAL_PORT = '/dev/cu.usbmodem1101'  # macOS/Linux
 # SERIAL_PORT = 'COM3'                 # Windows
 BAUD_RATE = 115200
 
@@ -30,4 +30,4 @@ def get_entropy():
 
 if __name__ == "__main__":
     threading.Thread(target=read_entropy, daemon=True).start()
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5050)
