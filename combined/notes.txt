@@ -18,6 +18,9 @@ https://abc123.ngrok.io/entropy
 entropy as a service 
 
 
+current file runs locally by executing python3 flaskbackend.py. if serial connection busy, close arduino ide. 
+
+
 
 
 
