@@ -1,0 +1,23 @@
+Since A0 is already analog-capable, it’s safe to reuse as a digital pin for OneWire.
+So we’ll use:
+A0 (D14) → Temperature sensor (OneWire)
+A1 → Sound sensor envelope
+A2 → Light sensor
+
+
+
+going to output:
+ENTROPY: a0b1c2...ff
+
+main compute
+pip install flask pyserial
+ngrok http 5000
+You’ll get a public URL like https://abc123.ngrok.io, then on Heroku, make a GET request to:
+https://abc123.ngrok.io/entropy
+
+entropy as a service 
+
+
+
+
+

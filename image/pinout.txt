@@ -1,0 +1,37 @@
+OV7670 Pin	Function	Arduino Uno Pin	Notes
+3.3	Power	3.3V	Use only 3.3V, not 5V ⚠️
+GND	Ground	GND	Common ground
+SCL	I2C Clock	A5	For register config
+SDA	I2C Data	A4	For register config
+VS	VSYNC	D2	Frame sync
+HS	HREF	D3	Line sync
+PCLK	Pixel clock	D4	Read pixel timing here
+MCLK	XCLK input	D9	Output ~8 MHz clock from Arduino
+D7	Data bit 7	D12	
+D6	Data bit 6	D11	
+D5	Data bit 5	D10	
+D4	Data bit 4	D8	
+D3	Data bit 3	D7	
+D2	Data bit 2	D6	
+D1	Data bit 1	D5	
+D0	Data bit 0	D4 (conflict!)	Move to D13 or A0?
+RST	Reset	3.3V	Pull HIGH to keep active
+PWN	Power down	GND	Pull LOW to keep camera on
+
+
+
+
+
+data pins:
+OV7670	Arduino Pin
+D7	D12
+D6	D11
+D5	D10
+D4	D8
+D3	D7
+D2	D6
+D1	D5
+D0	D13
+
+
+baud rate - 115200, will have to reconcile with 9600 from others
