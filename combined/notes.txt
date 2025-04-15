@@ -21,6 +21,9 @@ entropy as a service
 current file runs locally by executing python3 flaskbackend.py. if serial connection busy, close arduino ide. 
 
 
+ngrok http http://localhost:5050
+must also be running the python backend on computer
+
 
 
 
