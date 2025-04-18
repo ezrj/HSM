@@ -1,4 +1,3 @@
-//not tested
 #include <Wire.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -11,25 +10,21 @@
 #define PIN_XCLK 9
 
 const int pixelPins[8] = {13, 5, 6, 7, 8, 10, 11, 12}; // D0–D7
-const int tempPin = A0;  // Moved DS18B20 to A0 (D14)
+const int tempPin = A0;
 const int soundPin = A1;
 const int lightPin = A2;
 
-// ========== TEMP SENSOR SETUP ==========
 OneWire oneWire(tempPin);
 DallasTemperature tempSensor(&oneWire);
 
-// ========== INIT ==========
 void setup() {
   Serial.begin(115200);
   Wire.begin();
 
-  // Camera control pins
   pinMode(PIN_VSYNC, INPUT);
   pinMode(PIN_HREF, INPUT);
   pinMode(PIN_PCLK, INPUT);
   pinMode(PIN_XCLK, OUTPUT);
-
   for (int i = 0; i < 8; i++) pinMode(pixelPins[i], INPUT);
 
   setupXCLK();
@@ -39,9 +34,9 @@ void setup() {
   Serial.println("Starting entropy sampler...");
 }
 
-// ========== MAIN LOOP ==========
 void loop() {
   byte entropy[32] = {0};  // 256-bit entropy pool
+  byte imageMatrix[10][10];  // store the pixel matrix
 
   // === Read Light Sensor ===
   int light = analogRead(lightPin);
@@ -56,40 +51,52 @@ void loop() {
   // === Read Temperature ===
   tempSensor.requestTemperatures();
   float tempC = tempSensor.getTempCByIndex(0);
-  int tempScaled = (int)(tempC * 100);  // e.g., 23.45°C → 2345
-
+  int tempScaled = (int)(tempC * 100);
   entropy[4] ^= tempScaled & 0xFF;
   entropy[5] ^= (tempScaled >> 8) & 0xFF;
 
   // === Capture Camera Data ===
   waitForVsync();
-  delayMicroseconds(500); // Skip some lines
+  delayMicroseconds(500);
 
   for (int row = 0; row < 10; row++) {
     waitForHref();
-    delayMicroseconds(200); // Skip some pixels
-
+    delayMicroseconds(200);
     for (int col = 0; col < 10; col++) {
       waitForPclk(); delayMicroseconds(1);
       byte pixel = readPixelByte();
-      waitForPclk(); delayMicroseconds(1); // Skip U
+      waitForPclk(); delayMicroseconds(1);  // skip U
+      imageMatrix[row][col] = pixel;
 
-      // Mix pixel into entropy
       int idx = (row * 10 + col) % 32;
       entropy[idx] ^= pixel;
     }
     delayMicroseconds(50);
   }
 
-  // === Output Entropy in Hex ===
-  Serial.print("Entropy: ");
+  // === Output Values ===
+  Serial.println("---- ENTROPY FRAME ----");
+  Serial.print("Light: "); Serial.println(light);
+  Serial.print("Sound: "); Serial.println(sound);
+  Serial.print("Temp (°C): "); Serial.println(tempC);
+
+  Serial.println("Camera Matrix (10x10):");
+  for (int r = 0; r < 10; r++) {
+    for (int c = 0; c < 10; c++) {
+      Serial.print(imageMatrix[r][c]);
+      Serial.print("\t");
+    }
+    Serial.println();
+  }
+
+  Serial.print("ENTROPY: ");
   for (int i = 0; i < 32; i++) {
     if (entropy[i] < 16) Serial.print("0");
     Serial.print(entropy[i], HEX);
   }
-  Serial.println();
+  Serial.println("\n------------------------");
 
-  delay(2000); // Wait before next collection
+  delay(2000);
 }
 
 // ========== LOW-LEVEL CAMERA I/O ==========
